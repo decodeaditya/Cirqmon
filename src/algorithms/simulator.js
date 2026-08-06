@@ -1,112 +1,100 @@
 import gateMatrics from "../data/gateMatrics.js";
 
-function initializeStateVector(numQubits) {
-
+const initializeStateVector = (numQubits) => {
     const size = Math.pow(2, numQubits);
     const stateVector = new Array(size).fill(null).map(() => [0, 0]);
-
     stateVector[0] = [1, 0];
-
     return stateVector;
-}
+};
 
 // needed because JS cant handle complex multiplication. but math is simple as we do for normal (a+b)(a-b) type
-
 const calcCompNum = (complex1, complex2) => {
-
     const [a, b] = complex1;
     const [c, d] = complex2;
-
     return [a * c - b * d, a * d + b * c];
-}
+};
 
-// this is responsible for merging the gates in each step, and in real its only responsible as we increase no of qubits it slows calculation as it iterates again and again 
+// Main Part that compares gate matrix with Temp result matrix be inflating and forcing bigger Result matrix to match what
+// gateMatrix's corresponding row and Column. Uses Bitwise operations. 
+const buildStepMatrix = (gateType, involvedQubits, numQubits, bigEndian = false) => {
+    let gateMatrix = gateMatrics[gateType.toUpperCase()];
+    if (gateType == "sw"){ gateMatrix = gateMatrics["SWAP"] }
 
-const tensorProduct = (matrixA, matrixB) => {
-    const rA = matrixA.length;
-    const cA = matrixA[0].length;
-    const rB = matrixB.length;
-    const cB = matrixB[0].length;
+    const gateLength = involvedQubits.length;     
 
-    const resultRow = rA * rB;
-    const resultCol = cA * cB;
+    const fullSize = Math.pow(2,numQubits);
+    const gateMatrixSize = Math.pow(2,gateLength)
 
-    const result = new Array(resultRow).fill(null).map(() => new Array(resultCol));
+    const result = Array.from({ length: fullSize }, () =>
+        Array.from({ length: fullSize }, () => [0, 0])
+    );
 
-    for (let i = 0; i < rA; i++) {
-        for (let j = 0; j < cA; j++) {
-            for (let k = 0; k < rB; k++) {
-                for (let l = 0; l < cB; l++) {
-                    const row = i * rB + k;
-                    const col = j * cB + l;
-                    result[row][col] = calcCompNum(matrixA[i][j], matrixB[k][l]);
+    const bitPos = involvedQubits.map(q =>
+        bigEndian ? (numQubits - 1 - q) : q
+    );
+
+    for (let i = 0; i < fullSize; i++) {
+
+        for (let row = 0; row < gateMatrixSize; row++) {
+            let fullRow = i;
+            let gateColIndex = 0;
+        
+            for (let b = 0; b < gateLength; b++) {
+                const bit = (row >> (gateLength - 1 - b)) & 1;
+                const mask = 1 << bitPos[b];
+                fullRow = bit ? (fullRow | mask) : (fullRow & ~mask);
+        
+                if ((i >> bitPos[b]) & 1) {
+                    gateColIndex = gateColIndex | (1 << (gateLength - 1 - b));
                 }
             }
+            result[fullRow][i] = gateMatrix[row][gateColIndex];
         }
     }
     return result;
-}
-
-// this one implements the tensor function step by step if no gate it assumes Identity gate
+};
 
 
-const buildStepMatrix = (noOfQubits, allGatesInStep, bigEndian) => {
-
-    const initialGate = allGatesInStep[ bigEndian ? 0 : noOfQubits - 1 ] || 'I';
-    let runningStepMatrix = gateMatrics[initialGate.toUpperCase()];
-
-    for (let i = 1; i < noOfQubits; i++) {
-
-        const targetIndex = bigEndian ? i : noOfQubits - 1 - i;
-        const gateType = allGatesInStep[targetIndex] || 'I';
-
-        const currentGateMatrix = gateMatrics[gateType.toUpperCase()];
-        runningStepMatrix = tensorProduct(runningStepMatrix, currentGateMatrix);
-
-    }
-
-    return runningStepMatrix;
-}
-
-// for Columns(stateVector and tensor product)
-
+// for Matrix and Statevector multiplication
 const multiplyMatrixVector = (matrix, vector) => {
-
     const size = vector.length;
     const newVector = new Array(size).fill(null).map(() => [0, 0]);
 
     for (let i = 0; i < size; i++) {
-
         let sum = [0, 0];
-
         for (let j = 0; j < size; j++) {
             const product = calcCompNum(matrix[i][j], vector[j]);
             sum = [sum[0] + product[0], sum[1] + product[1]];
         }
-
         newVector[i] = sum;
     }
     return newVector;
-}
+};
+
 
 // final function
-
-const runSimulator = (numQubits, rawCircuit, bigEndian) => {
+const runSimulator = (numQubits, rawCircuit, bigEndian = false) => {
     let stateVector = initializeStateVector(numQubits);
-
-    if (rawCircuit.length === 0) return stateVector;
+    if (!rawCircuit || rawCircuit.length === 0) return stateVector;
 
     const maxStep = Math.max(...rawCircuit.map(c => c.step));
 
     for (let step = 0; step <= maxStep; step++) {
-        const gatesInThisStep = {};
-        rawCircuit.filter(c => c.step === step).forEach(c => { gatesInThisStep[c.target] = c.gate; });
+        const gatesInStep = rawCircuit.filter(c => c.step === step);
 
-        const stepMatrix = buildStepMatrix(numQubits, gatesInThisStep, bigEndian);
-        stateVector = multiplyMatrixVector(stepMatrix, stateVector);
+        for (const gate of gatesInStep) {
+            const controls = gate.controls ?? (gate.control !== undefined ? [gate.control] : []);
+            const targets = gate.targets ?? (gate.target !== undefined ? [gate.target] : []);
+            const qubits = [...controls, ...targets];
+
+            const stepMatrix = buildStepMatrix(gate.gate, qubits, numQubits, bigEndian);
+            stateVector = multiplyMatrixVector(stepMatrix, stateVector);
+
+        }
+
     }
 
     return stateVector;
-}
+};
 
 export default runSimulator;

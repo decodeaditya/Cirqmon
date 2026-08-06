@@ -18,7 +18,7 @@ const GatesInformation = ({ inspectedGate, onCloseGateWiki }) => {
                 transition-all duration-200 animate-in fade-in zoom-in-90">
 
                     <div className="flex items-center justify-between pb-3 mb-3 border-b-4 border-black/15">
-                        <span className="font-black text-black text-xs uppercase tracking-widest p-2 rounded-xl border-1 border-black/30 rounded bg-yellow-300">
+                        <span className="font-black text-black text-xs uppercase tracking-widest p-2 border border-black/30 rounded bg-yellow-300">
                             {inspectedGate.easyName || "Quantum Gate"}
                         </span>
                         
@@ -47,8 +47,8 @@ const GatesInformation = ({ inspectedGate, onCloseGateWiki }) => {
                     </div>
 
                     <div className="mt-3 items-center gap-1.5 font-black tracking-tight text-black bg-yellow-400 border-2 border-black/30 rounded-2xl p-3 shadow-md/20">
-                        <p>If Applied twice</p>
-                        <div className="font-bold p-2 bg-white border-1 border-black/20 rounded-2xl mt-1 flex bg-item-center shadow/20">
+                        <p>Applying more than once</p>
+                        <div className="font-bold p-2 bg-white border border-black/20 rounded-2xl mt-1 flex bg-item-center shadow/20">
                             {inspectedGate.undo || "No ASCII representation available."}
                         </div>
                     </div>

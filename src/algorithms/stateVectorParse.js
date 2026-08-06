@@ -1,7 +1,7 @@
 const parseEachState = ([real, imaginary], noOfQubits, index) => {
 
     const probability = (Math.pow(real, 2) + Math.pow(imaginary, 2)).toFixed(2);
-    const phaseAngle = Math.atan2(imaginary, real);
+    const phaseAngle =  (Math.atan2(imaginary, real)).toFixed(1);
     const stateName = index.toString(2).padStart(noOfQubits, '0')
 
     // Hamming weight - no of 1s in state
@@ -66,15 +66,11 @@ const calculateQSphereNodes = (parsedStateVector, noOfQubits) => {
                 index: node.index,
                 probability: node.probability,
                 phase: node.phaseAngle,
-                coordinates: [ x, y, z ],
+                coordinates: [x, y, z],
                 stateName: node.stateName
             });
 
         })
-
-        //     //     // Relative phase wrapped to [0, 2π)
-        //     //     let relativePhase = (node.phase - maxPhase) % (2 * Math.PI);
-        //     //     if (relativePhase < 0) relativePhase += 2 * Math.PI;
     }
 
     return QSphereData;

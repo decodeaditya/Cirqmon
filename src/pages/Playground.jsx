@@ -3,6 +3,7 @@ import Canvas from '../blocks/Canvas'
 import SidebarBtn from '../components/SidebarBtn'
 import GatesTray from '../blocks/GatesTray'
 import AdjustGrid from '../tools/AdjustGrid'
+import MultiGateModal from '../blocks/MultiGateModal'
 
 import useSound from 'use-sound'
 
@@ -21,6 +22,8 @@ import sceneryIcon from '../assets/icons/scene.webp'
 import qubitsIcon from '../assets/icons/nuclei.webp'
 import homeIcon from '../assets/icons/home.webp'
 
+import gates from '../data/gatesWiki';
+
 const Playground = () => {
 
     const navigate = useNavigate()
@@ -34,6 +37,9 @@ const Playground = () => {
     const [background, setBackground] = useState(backgrounds[0]);
     const [musicPlaying, setMusicPlaying] = useState(false);
     const [qubitsAdjustOpen, setQubitsAdjustOpen] = useState(false);
+
+
+    const [multiQubitData, setmultiQubitData] = useState(null);
 
     const [play, { stop }] = useSound(audio_url, { volume: 0.5, loop: true, });
 
@@ -71,12 +77,10 @@ const Playground = () => {
 
 
     const addNewQubit = () => {
-
         const newQubitID = Object.keys(circuit).length;
 
         if (newQubitID >= 5) return; // Maximum 5 qubits for Now
         setCircuit((oldCircuit) => ({ ...oldCircuit, [newQubitID]: Array(circuit[0].length).fill(null) }));
-
     };
 
     const removeQubit = () => {
@@ -91,7 +95,6 @@ const Playground = () => {
             delete copy[qubitToRemove];
             return copy;
         });
-
     };
 
     const addCircuitNode = () => {
@@ -117,6 +120,7 @@ const Playground = () => {
         setCircuit(oldCircuit);
     }
 
+
     const handleDragEnd = (event) => {
 
         const { source, target } = event.operation;
@@ -130,30 +134,96 @@ const Playground = () => {
 
         const [_, qubitId, stepIdx] = targetId.split('-');
 
+        const gate = gates.find(g => g.id.toLowerCase() === gateId.toLowerCase());
+
+        if (gate.type === 'multi') {
+            setmultiQubitData({
+                gateId,
+                qubitId: parseInt(qubitId),
+                stepIdx: parseInt(stepIdx)
+            });
+
+            return;
+        }
+
         setCircuit((prevCircuit) => {
+
             const nextCircuit = { ...prevCircuit };
 
             nextCircuit[qubitId] = [...prevCircuit[qubitId]];
-            nextCircuit[qubitId][stepIdx] = gateId;
+            nextCircuit[qubitId][stepIdx] = { type: 'single', gate: gateId };
 
             return nextCircuit;
         });
     };
+
+    const handleConfirmMultiGate = (controlQubit, targetQubit) => {
+
+        if (!multiQubitData) return;
+
+        const { gateId, stepIdx } = multiQubitData;
+
+        setCircuit((prevCircuit) => {
+
+            const nextCircuit = { ...prevCircuit };
+
+            nextCircuit[controlQubit] = [...prevCircuit[controlQubit]];
+            nextCircuit[targetQubit] = [...prevCircuit[targetQubit]];
+
+            nextCircuit[controlQubit][stepIdx] = {
+                type: 'multi',
+                gate: gateId,
+                role: 'control',
+                pairedWith: targetQubit
+            };
+
+            nextCircuit[targetQubit][stepIdx] = {
+                type: 'multi',
+                gate: gateId,
+                role: 'target',
+                pairedWith: controlQubit
+            };
+
+            return nextCircuit;
+        });
+
+        setmultiQubitData(null);
+    };
+
+
 
     const removeGate = (qubitId, stepId) => {
 
         setCircuit((prevCircuit) => {
 
             const nextCircuit = { ...prevCircuit };
+            const currentCell = nextCircuit[qubitId][stepId];
 
-            nextCircuit[qubitId] = [...prevCircuit[qubitId]];
-            nextCircuit[qubitId][stepId] = null;
+            if (!currentCell) return prevCircuit;
+
+            if (currentCell.type === 'multi') {
+
+                const partnerQubit = currentCell.pairedWith;
+
+                nextCircuit[qubitId] = [...prevCircuit[qubitId]]
+                nextCircuit[qubitId][stepId] = null
+
+                if (nextCircuit[partnerQubit]) {
+                    nextCircuit[partnerQubit] = [...prevCircuit[partnerQubit]];
+                    nextCircuit[partnerQubit][stepId] = null;
+                }
+
+            } else {
+
+                nextCircuit[qubitId] = [...prevCircuit[qubitId]]
+                nextCircuit[qubitId][stepId] = null
+
+            }
 
             return nextCircuit;
         });
-
-
     };
+    
 
     return (
         <DragDropProvider onDragEnd={handleDragEnd}>
@@ -178,6 +248,14 @@ const Playground = () => {
                     removeNode={removeCircuitNode}
                 />
 
+                <MultiGateModal
+                    isOpen={multiQubitData !== null}
+                    modalData={multiQubitData}
+                    maxQubits={Object.keys(circuit).length}
+                    onClose={() => setmultiQubitData(null)}
+                    onConfirm={handleConfirmMultiGate}
+                />
+
             </div>
 
 
@@ -193,7 +271,7 @@ const Playground = () => {
 
 const Sidebar = ({ buttons }) => {
     return (
-        <div className="gap-4 justify-center bg-white/10 backdrop-blur-3xl border-2 border-black/50 shadow-md/70 p-6 flex sm:w-max sm:flex-col rounded-r-[50px]">
+        <div className="gap-4 justify-center bg-black/10 backdrop-blur-3xl shadow-[0px_7px_29px_0px_rgba(100,100,111,0.2)] p-6 flex sm:w-max sm:flex-col rounded-r-[50px]">
             {buttons.map((btn) => (
                 <SidebarBtn key={btn.id} btn={btn} onClick={btn.onclick} />
             ))}

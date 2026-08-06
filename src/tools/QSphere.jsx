@@ -3,7 +3,8 @@ import { Canvas } from '@react-three/fiber'
 
 const QSphereRadii = 2
 
-const generateEquatorPoints = (radius, segments = 100) => {
+const generateEquatorPoints = (radius, segments = 1000) => {
+
     const points = [];
 
     for (let i = 0; i <= segments; i++) {
@@ -15,16 +16,31 @@ const generateEquatorPoints = (radius, segments = 100) => {
     return points;
 };
 
+// hsl to rgb
+const getQSphereColor = (phase) => {
+
+    const h = (((phase % (2 * Math.PI)) * (180 / Math.PI)) + 360) % 360;
+
+    const ctx = document.createElement('canvas').getContext('2d');
+    ctx.fillStyle = `hsl(${h}deg, 100%, 50%)`;
+    const color = ctx.fillStyle;
+
+    return color;
+
+}
+
 const QuantumLabel = ({ stateName, phaseAngle }) => {
+
+    const displayPhase = (phaseAngle * (180 / Math.PI)).toFixed(2) + "°"
+
     return (
         <div className='flex'>
             <p className="bg-gray-800/80 backdrop-blur-md text-white text-[10px]
      px-2 py-0.5 rounded-l-sm shadow-sm tracking-wider">
                 |{stateName}⟩
             </p>
-            <p className="bg-yellow-700/70 backdrop-blur-md text-white text-[10px]
-     px-2 py-0.5 rounded-r-sm shadow-sm tracking-wider">
-                {phaseAngle}
+            <p className="bg-teal-600/40 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded-r-sm shadow-sm tracking-wider">
+                {displayPhase}
             </p>
         </div>
     )
@@ -33,20 +49,18 @@ const QuantumLabel = ({ stateName, phaseAngle }) => {
 const StateNode = ({ position, color, probabilitySize, stateName, phase }) => {
 
     const finalCoordinates = position.map((point) => point * QSphereRadii)
-    const diminishedNodeRadius = probabilitySize == 1 ? probabilitySize * 0.1 : probabilitySize * 0.5
+    const diminishedNodeRadius = probabilitySize * 0.3
 
     return (
         <group>
             <Line points={[[0, 0, 0], finalCoordinates]} color="#64748b" lineWidth={2} />
 
-            <Sphere args={[diminishedNodeRadius, 16, 16]} position={finalCoordinates}>
-                <meshStandardMaterial color={color} roughness={0.3} metalness={0.1} />
+            <Sphere args={[diminishedNodeRadius, 100, 100]} position={finalCoordinates}>
+                <meshStandardMaterial color={color}/>
 
                 <Html distanceFactor={6} position={[0, diminishedNodeRadius + 0.2, 0]} center>
-                    <QuantumLabel stateName={stateName} probability={probabilitySize} phaseAngle={phase}/>
+                    <QuantumLabel stateName={stateName} probability={probabilitySize} phaseAngle={phase} />
                 </Html>
-
-
 
             </Sphere>
 
@@ -60,7 +74,7 @@ const QSphere = ({ nodesData }) => {
     const equatorPoints = generateEquatorPoints(QSphereRadii);
 
     return (
-        <div className='bg-[#1e1e1e] relative flex-1 flex flex-col h-full m-2 rounded-4xl
+        <div className='bg-black/90 relative flex-1 flex flex-col h-full rounded-4xl
          shadow-[inset_0_4px_12px_rgba(0,0,0,0.9),0_8px_8px_-4px_rgba(0,0,0,0.7),0_2px_4px_rgba(255,255,255,0.03)] backdrop-blur-md'>
 
             <Canvas camera={{ position: [0, 1, 4] }}>
@@ -81,26 +95,29 @@ const QSphere = ({ nodesData }) => {
 
                     <Line
                         points={equatorPoints}
-                        color="#4f46e5"
-                        lineWidth={2}
+                        color="gray"
+                        lineWidth={1}
                         transparent
                         opacity={0.6}
                     />
 
-                    <Sphere args={[0.02, 16, 16]} position={[0, 0, 0]}>
+                    <Sphere args={[0.02, 64, 64]} position={[0, 0, 0]}>
                         <meshBasicMaterial color={"#fff"} />
                     </Sphere>
 
-                    {nodesData.map((node) => (
-                        <StateNode
+                    {nodesData.map((node) => {
+
+                        const color = getQSphereColor(node.phase)
+
+                        return <StateNode
                             key={node.index}
                             position={node.coordinates}
                             probabilitySize={node.probability}
-                            color={"#ef4444"}
+                            color={color}
                             stateName={node.stateName}
                             phase={node.phase}
                         />
-                    )
+                    }
                     )}
                 </group>
 

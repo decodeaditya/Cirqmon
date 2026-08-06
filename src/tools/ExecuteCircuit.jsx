@@ -17,7 +17,7 @@ const ExecuteCircuit = ({ circuit }) => {
         const { circuitInstructions, maxQubits } = canvasToJSON(circuit)
         const code = exportToCode(maxQubits, circuitInstructions)
 
-        const isBigEndian = true;
+        const isBigEndian = false;
         const stateVector = await runSimulator(maxQubits, circuitInstructions, isBigEndian)
         const { parsedStateVector, QsphereData } = stateVectorSimplifer(stateVector)
 
@@ -42,7 +42,6 @@ const ExecuteCircuit = ({ circuit }) => {
                     qiskitCode={pythonCode}
                     dataToRender={dataToRender} />
             }
-
         </div>
     )
 }
