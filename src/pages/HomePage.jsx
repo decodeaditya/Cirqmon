@@ -159,7 +159,7 @@ export default function Homepage() {
                     <div>
                         <h3 className="text-3xl font-black text-white mb-2">For Interactions</h3>
                         <p className="text-slate-200 font-medium leading-relaxed max-w-2xl">
-                            If you have any Feedbacks or Idea the Project is Open Source so You can Make a PR. You Can connect me with Socials!
+                            If you have any Feedbacks or Ideas, the Project is Open Source so You can contribute. You can connect with me on Social media too!
                         </p>
                     </div>
 

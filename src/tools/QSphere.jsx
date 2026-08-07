@@ -1,5 +1,6 @@
 import { Html, Line, OrbitControls, Sphere } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
+import colorWheel from "../assets/hue_color_wheel.png"
 
 const QSphereRadii = 2
 
@@ -31,7 +32,7 @@ const getQSphereColor = (phase) => {
 
 const QuantumLabel = ({ stateName, phaseAngle }) => {
 
-    const displayPhase = (phaseAngle * (180 / Math.PI)).toFixed(2) + "°"
+    const displayPhase = Number((phaseAngle * (180 / Math.PI)).toFixed(2)) + "°"
 
     return (
         <div className='flex'>
@@ -122,7 +123,9 @@ const QSphere = ({ nodesData }) => {
                 </group>
 
             </Canvas>
-
+        <div className='absolute bottom-4 right-4 flex items-center gap-2 text-white text-[10px] font-mono'>
+        <img src={colorWheel} className='cursor-pointer opacity-10 w-24 hover:w-45 hover:opacity-100 transition-all duration-100'/>    
+        </div>         
         </div>
     )
 }
