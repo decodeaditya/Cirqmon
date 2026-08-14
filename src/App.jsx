@@ -2,6 +2,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import './App.css';
 import Playground from './pages/Playground';
 import Homepage from './pages/HomePage';
+import Writings from './pages/Writings';
 import { BrowserRouter, Route, Routes, useLocation, useNavigation } from 'react-router';
 
 import default_bg from './assets/canvas_backgrounds/bg1.jpg'
@@ -27,6 +28,7 @@ const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route path='/' element={<Homepage />} />
         <Route path='/playground' element={<ScreenRestricter />} />
+        <Route path='/blogs' element={<Writings />} />
       </Routes>
 
     </AnimatePresence>

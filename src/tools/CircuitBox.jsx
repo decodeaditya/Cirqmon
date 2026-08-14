@@ -16,9 +16,9 @@ const DroppableSocket = ({ id, children }) => {
 const CircuitBox = ({ circuit, setCircuit, removeGate }) => {
 
     const renderGateContents = (cellData, qubitId) => {
-        if (typeof cellData === 'string' || cellData?.type === 'single') {
+        if (cellData?.type === 'single') {
 
-            const gateName = typeof cellData === 'string' ? cellData : cellData.gate;
+            const gateName = cellData.gate;
             const gateData = gates.find((g) => g.id.toUpperCase() === gateName.toUpperCase());
 
             return (
@@ -89,17 +89,15 @@ const CircuitBox = ({ circuit, setCircuit, removeGate }) => {
             {Object.keys(circuit).map((qubitId) => (
                 <div key={qubitId} className="relative flex items-center gap-4 sm:gap-6">
 
-
                     <div className="relative shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-white border-3 border-black/40 rounded-3xl flex flex-col items-center mr-4 justify-center shadow-[4px_4px_0px_0px_#000]">
                         <span className="absolute -top-2.5 px-2 py-0.5 font-mono text-[9px] font-black bg-black text-white rounded-full">
                             Q_{qubitId}
                         </span>
-                        <span className="font-black text-2xl sm:text-3xl text-black">|0&rang;</span>
+                        <span className="font-black text-2xl sm:text-3xl text-black">|0⟩</span>
                     </div>
 
-
                     <div className="relative flex-1 flex items-center justify-between gap-2 sm:gap-20 h-20">
-                        <div className="absolute left-0 right-0 border-b-4 border-dashed border-black/40 -z-10" />
+                        <div className="absolute left-0 right-0 border-b-4 border-dashed border-black/40 -z-10 mr-8" />
 
                         {Object.keys(circuit[qubitId]).map((stepID) => {
                             const cellData = circuit[qubitId][stepID];
@@ -108,7 +106,7 @@ const CircuitBox = ({ circuit, setCircuit, removeGate }) => {
                                 <DroppableSocket key={`${qubitId}-${stepID}`} id={`socket-${qubitId}-${stepID}`}>
                                     <div
                                         onClick={() => cellData && removeGate(qubitId, stepID)}
-                                        className="cursor-pointer"
+                                        className="cursor-pointer mr-8"
                                     >
                                         {renderGateContents(cellData, qubitId)}
                                     </div>

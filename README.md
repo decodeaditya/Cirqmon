@@ -42,22 +42,20 @@ This project aims to be a simple but complete playground where you can:
 
   ![Canvas](./src/assets/tour_shots/Canvas.png)
 
-
-
 - ### **Vibe and Controls**  
   Here you can control Number of Qubits and Nodes. Also change wallpaper or work while listening to Audio, so you don't lose Vibe. 
 
   ![Vibe and Controls](./src/assets/tour_shots/Controls.png)  
 
+  - ### **Includes Foundational Gates**  
+  Builder works with Gates like `H`, `X`, `Y`, `Z`, `S`, `T`, `CX`, `CZ`, `SWAP` and more.  
+
+  ![Gates](./src/assets/tour_shots/Gates.png)  
+
 - ### **Get Brief Introduction**  
   Click on gate (or Drag to use) to Know about that Gate in Brief.   
 
   ![Gates](./src/assets/tour_shots/GateIntro.png)
-
-- ### **Includes Foundational Gates**  
-  Builder works with Gates like `H`, `X`, `Y`, `Z`, `S`, `T`, `CX`, `CZ`, `SWAP` and more.  
-
-  ![Gates](./src/assets/tour_shots/Gates.png)  
 
 - ### **Statevector simulation**  
   Press Alien's face on bottom-right to See amplitudes and probabilities as you build.  

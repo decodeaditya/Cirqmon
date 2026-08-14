@@ -11,28 +11,33 @@ const ExecuteCircuit = ({ circuit }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [pythonCode, setCode] = useState("#nothing in console")
     const [dataToRender, setData] = useState([])
+    const [isBigEndian, setBigEndian] = useState(true)
 
-    const executeButtonClicked = async () => {
-
+    const executeCircuit = async () => {
         const { circuitInstructions, maxQubits } = canvasToJSON(circuit)
         const code = exportToCode(maxQubits, circuitInstructions)
 
-        const isBigEndian = false;
         const stateVector = await runSimulator(maxQubits, circuitInstructions, isBigEndian)
         const { parsedStateVector, QsphereData } = stateVectorSimplifer(stateVector)
 
         setData({ parsedStateVector, QsphereData })
-
         setCode(code)
-        setIsModalOpen(!isModalOpen)
-
     }
+
+    const executeAndOpenModal = async () => {
+        await executeCircuit()
+        setIsModalOpen(true)
+    }
+
+    useEffect(() => {
+        executeCircuit()
+    }, [isBigEndian])
 
     return (
         <div className="absolute bottom-8 right-10">
 
             <Tooltip text="Execute Circuit" isRight={false}>
-                <ExecuteButton whenClicked={executeButtonClicked} />
+                <ExecuteButton whenClicked={executeAndOpenModal} />
             </Tooltip>
 
             {isModalOpen &&
@@ -40,7 +45,12 @@ const ExecuteCircuit = ({ circuit }) => {
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(!isModalOpen)}
                     qiskitCode={pythonCode}
-                    dataToRender={dataToRender} />
+                    dataToRender={dataToRender}
+                    isBigEndian={isBigEndian}
+                    setBigEndian={setBigEndian}
+                />
+
+
             }
         </div>
     )

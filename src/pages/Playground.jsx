@@ -23,6 +23,7 @@ import qubitsIcon from '../assets/icons/nuclei.webp'
 import homeIcon from '../assets/icons/home.webp'
 
 import gates from '../data/gatesWiki';
+import circuitConfig from '../data/config'
 
 const Playground = () => {
 
@@ -34,7 +35,7 @@ const Playground = () => {
         background3
     ]
 
-    const [background, setBackground] = useState(backgrounds[0]);
+    const [background, setBackground] = useState(0);
     const [musicPlaying, setMusicPlaying] = useState(false);
     const [qubitsAdjustOpen, setQubitsAdjustOpen] = useState(false);
 
@@ -44,7 +45,7 @@ const Playground = () => {
     const [play, { stop }] = useSound(audio_url, { volume: 0.5, loop: true, });
 
     const changeBackground = () => {
-        setBackground(backgrounds[(backgrounds.indexOf(background) + 1) % backgrounds.length]);
+        setBackground(((lastBg) => (lastBg + 1) % backgrounds.length));
     };
 
     const manageMusic = async () => {
@@ -79,7 +80,7 @@ const Playground = () => {
     const addNewQubit = () => {
         const newQubitID = Object.keys(circuit).length;
 
-        if (newQubitID >= 5) return; // Maximum 5 qubits for Now
+        if (newQubitID >= circuitConfig.maxQubits) return; // Maximum qubits for Now
         setCircuit((oldCircuit) => ({ ...oldCircuit, [newQubitID]: Array(circuit[0].length).fill(null) }));
     };
 
@@ -100,7 +101,7 @@ const Playground = () => {
     const addCircuitNode = () => {
         const oldCircuit = { ...circuit };
 
-        if (oldCircuit[0].length >= 6) return; // Maximum 6 steps for Now
+        if (oldCircuit[0].length >= circuitConfig.maxSteps) return; // Maximum steps for Now
 
         for (const key in oldCircuit) {
             oldCircuit[key].push(null);
@@ -112,7 +113,7 @@ const Playground = () => {
 
         const oldCircuit = { ...circuit };
 
-        if (oldCircuit[0].length <= 4) return;
+        if (oldCircuit[0].length <= circuitConfig.minSteps) return;
 
         for (const key in oldCircuit) {
             oldCircuit[key].pop();
@@ -228,7 +229,7 @@ const Playground = () => {
     return (
         <DragDropProvider onDragEnd={handleDragEnd}>
 
-            <div style={{ backgroundImage: `url(${background})` }} className={`bg-cover bg-center bg-fixed bg-no-repeat w-screen
+            <div style={{ backgroundImage: `url(${backgrounds[background]})` }} className={`bg-cover bg-center bg-fixed bg-no-repeat w-screen
                  h-screen items-center justify-center p-6 relative transition-all duration-500 flex flex-col sm:flex-row`}>
 
                 <GatesTray />

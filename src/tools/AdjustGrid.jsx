@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import circuitConfig from '../data/config'
 
 const AdjustGrid = ({ qCount, nCount, addQubit, removeQubit, addNode, removeNode }) => {
 
@@ -29,7 +30,7 @@ const AdjustGrid = ({ qCount, nCount, addQubit, removeQubit, addNode, removeNode
 
                         <button
                             onClick={() => addQubit()}
-                            disabled={qCount >= 5}
+                            disabled={qCount >= circuitConfig.maxQubits}
                             className="w-10 h-10 bg-green-400 text-black font-black text-xl rounded-full shadow-xs/100 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-40 disabled:grayscale disabled:shadow-none disabled:cursor-not-allowed"
                         >
                             +
@@ -44,7 +45,7 @@ const AdjustGrid = ({ qCount, nCount, addQubit, removeQubit, addNode, removeNode
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => removeNode()}
-                            disabled={nCount <= 4}
+                            disabled={nCount <= circuitConfig.minSteps}
                             className="w-10 h-10 bg-red-400 text-white rounded-full font-black text-xl shadow-xs/100 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-40 disabled:grayscale disabled:shadow-none disabled:cursor-not-allowed"
                         >
                             -
@@ -56,7 +57,7 @@ const AdjustGrid = ({ qCount, nCount, addQubit, removeQubit, addNode, removeNode
 
                         <button
                             onClick={() => addNode()}
-                            disabled={nCount >= 6}
+                            disabled={nCount >= circuitConfig.maxSteps}
                             className="w-10 h-10 bg-blue-300 text-black font-black text-xl rounded-full  shadow-xs/100 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-40 disabled:grayscale disabled:shadow-none disabled:cursor-not-allowed"
                         >
                             +

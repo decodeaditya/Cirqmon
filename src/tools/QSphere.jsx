@@ -23,7 +23,7 @@ const getQSphereColor = (phase) => {
     const h = (((phase % (2 * Math.PI)) * (180 / Math.PI)) + 360) % 360;
 
     const ctx = document.createElement('canvas').getContext('2d');
-    ctx.fillStyle = `hsl(${h}deg, 100%, 50%)`;
+    ctx.fillStyle = `hsl(${h} 100% 65%)`;
     const color = ctx.fillStyle;
 
     return color;
@@ -35,7 +35,7 @@ const QuantumLabel = ({ stateName, phaseAngle }) => {
     const displayPhase = Number((phaseAngle * (180 / Math.PI)).toFixed(2)) + "°"
 
     return (
-        <div className='flex'>
+        <div className='flex hover:scale-120 transition-all duration-200 cursor-pointer'>
             <p className="bg-gray-800/80 backdrop-blur-md text-white text-[10px]
      px-2 py-0.5 rounded-l-sm shadow-sm tracking-wider">
                 |{stateName}⟩

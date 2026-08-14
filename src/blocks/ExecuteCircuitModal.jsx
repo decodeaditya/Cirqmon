@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import QSphere from '../tools/QSphere'
+import Switch from "../components/Switch"
+import Tooltip from '../components/Tooltip'
 
-export const ExecuteCircuitModal = ({ isOpen, onClose, qiskitCode, dataToRender }) => {
+export const ExecuteCircuitModal = ({ isOpen, onClose, qiskitCode, dataToRender, isBigEndian, setBigEndian }) => {
 
     const [copied, setCopied] = useState(false)
     const { parsedStateVector, QsphereData } = dataToRender
@@ -24,10 +26,19 @@ export const ExecuteCircuitModal = ({ isOpen, onClose, qiskitCode, dataToRender 
                     <div className="flex items-center gap-2.5">
                         <h2 className="font-black text-xl tracking-tight text-white uppercase">Circuit Results and Code</h2>
                     </div>
-                    <button onClick={onClose} className="bg-slate-300 text-slate-900 rounded-xl p-2 font-black text-sm sm:text-base flex items-center
+                    <div className="flex gap-4 flex-row items-center">
+                        <div className="flex gap-2 flex-row items-center">
+                            <p className="text-sm font-bold text-white">Big Endian</p>
+                            <Switch isBigEndian={isBigEndian} setBigEndian={setBigEndian} />
+                        </div>
+
+                        <Tooltip text="Back to Canvas!" isRight={false}>
+                            <button onClick={onClose} className="bg-slate-300 text-slate-900 rounded-xl p-2 font-black text-sm sm:text-base flex items-center
                      gap-2 transition-all duration-150 shadow-md/100 hover:scale-95 active:shadow-[0_0px_0_0_#008B8B,0_0px_0_0_#0f172a] cursor-pointer">
-                        Back
-                    </button>
+                                Back
+                            </button>
+                        </Tooltip>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 flex-1 min-h-0 overflow-hidden">
@@ -39,7 +50,7 @@ export const ExecuteCircuitModal = ({ isOpen, onClose, qiskitCode, dataToRender 
                                 {!showQSphere &&
                                     <button
                                         onClick={copyCode}
-                                        className="px-3 py-1 bg-black/80 rounded-2xl hover:bg-[#3F3F46] border border-gray-600 text-xs font-mono font-bold 
+                                        className="px-3 py-1 bg-black/80 rounded-2xl hover:bg-[#3F3F46] border border-gray-600 text-xs font-bold 
                                 transition-colors cursor-pointer text-white"
                                     >
                                         {copied ? 'COPIED!' : 'COPY CODE'}
@@ -51,20 +62,20 @@ export const ExecuteCircuitModal = ({ isOpen, onClose, qiskitCode, dataToRender 
                             </div>
                         </div>
 
-                     <div className="flex-1 min-h-0 overflow-hidden rounded-4xl">
-                        {showQSphere ? <QSphere nodesData={QsphereData} /> :
-                            <div className="bg-black/90 h-full overflow-hidden rounded-4xl shadow-[inset_0_4px_12px_rgba(0,0,0,0.9),0_8px_24px_-4px_rgba(0,0,0,0.7)]"
-                            >
-                              <div className="p-5 rounded-4xl codePart h-full overflow-y-auto text-sm text-green-400 leading-relaxed whitespace-pre-wrap font-mono" style={{ scrollbarWidth: 'thin', scrollbarColor: '#404040 transparent'}}>
-                                {qiskitCode || "# start building to see code"}
-                              </div>
-                            </div>
-                        }
-                     </div>
+                        <div className="flex-1 min-h-0 overflow-hidden rounded-4xl">
+                            {showQSphere ? <QSphere nodesData={QsphereData} /> :
+                                <div className="bg-black/90 h-full overflow-hidden rounded-4xl shadow-[inset_0_4px_12px_rgba(0,0,0,0.9),0_8px_24px_-4px_rgba(0,0,0,0.7)]"
+                                >
+                                    <p className="p-5 rounded-4xl select-text codePart h-full overflow-y-auto text-sm text-green-400 leading-relaxed whitespace-pre-wrap" style={{ scrollbarWidth: 'thin', scrollbarColor: '#404040 transparent' }}>
+                                         {qiskitCode || "# start building to see code"}
+                                    </p>
+                                </div>
+                            }
+                        </div>
                     </div>
 
                     {/* Result Part */}
-                    <div className="p-6 flex flex-col gap-4 bg-blue-200 text-white m-2 rounded-2xl min-h-0 overflow-hidden">
+                    <div className="p-6 flex flex-col gap-4 bg-blue-300 text-white m-2 rounded-2xl min-h-0 overflow-hidden">
                         <div className="flex justify-between items-end border-b-2 border-black/10 pb-2">
                             <span className="font-black text-sm uppercase text-black">Probability of Qutbit States</span>
                             <span className="font-mono text-xs font-bold text-gray-800">{activeStateCount} Active State{activeStateCount !== 1 ? 's' : ''}</span>
