@@ -40,7 +40,7 @@ This project aims to be a simple but complete playground where you can:
 - ### **Drag-and-drop circuit builder**  
   Place single and multi-qubit gates on a visual canvas.
 
-  ![Canvas](./src/assets/tour_shots/canvas.png)
+  ![Canvas](./src/assets/tour_shots/Canvas.png)
 
 - ### **Vibe and Controls**  
   Here you can control Number of Qubits and Nodes. Also change wallpaper or work while listening to Audio, so you don't lose Vibe. 
@@ -50,7 +50,7 @@ This project aims to be a simple but complete playground where you can:
   - ### **Includes Foundational Gates**  
   Builder works with Gates like `H`, `X`, `Y`, `Z`, `S`, `T`, `CX`, `CZ`, `SWAP`, `CCX` and `CCZ`.  
 
-  ![Gates](./src/assets/tour_shots/gates.png)  
+  ![Gates](./src/assets/tour_shots/Gates.png)  
 
 - ### **Get Brief Introduction**  
   Click on gate (or Drag to use) to Know about that Gate in Brief.   
