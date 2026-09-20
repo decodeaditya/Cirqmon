@@ -1,15 +1,12 @@
 @import "tailwindcss";
 @import "tailwindcss/utilities";
 
-
 * {
-    font-family: "Stack Sans Headline", sans-serif;
+    font-family: "Bricolage Grotesque", sans-serif;
+    scroll-behavior: smooth;
 }
 
-h1 span,h1 {
-   font-family: "Galindo", sans-serif;
-}
-
-.codePart{
+.codePart {
     font-family: 'Google Sans Code', Courier, monospace;
 }
+

@@ -1,40 +1,38 @@
-// Demo info by AI (Needs to update in next version)
-
 const gates = [
   {
     id: 'h',
-    name: 'H',
-    bg: 'bg-[#FF6B6B]',
+    name: 'Hadamard Gate',
+    bg: 'bg-[#4c97ff]',
     text: 'text-white',
-    easyName: 'Hadamard',
-    work: 'Puts a qubit into a 50-50 possibility superposition state of |0⟩ and |1⟩.',
-    undo: 'Applying it twice collapses the qubit back to its original state.',
+    easyName: 'Equal Probability',
+    work: 'Normally a qubit is either |0⟩ or |1⟩, but after applying the Hadamard, it becomes a superpostion of both |0⟩ and |1⟩, with same 50% chances of measuring either.',
+    undo: 'Applying it twice returns the qubit back to its original state.',
     type: 'single'
   },
   {
     id: 'x',
-    name: 'X',
-    bg: 'bg-[#4ECDC4]',
-    text: 'text-black',
+    name: 'Pauli X Gate',
+    bg: 'bg-[#9966ff]',
+    text: 'text-white',
     easyName: 'Bit Flipper',
-    work: 'It Flips |0⟩ to |1⟩, or |1⟩ to |0⟩. The classic NOT gate.',
-    undo: 'Applying it twice brings you back to the start.',
+    work: 'It Flips State: Either: |0⟩ to |1⟩, or |1⟩ to |0⟩. It works like the classic computer NOT gate.',
+    undo: 'Applying it NOT Gate twice brings you back to original state.',
     type: 'single'
   },
   {
     id: 'y',
-    name: 'Y',
-    bg: 'bg-[#5F27CD]',
+    name: 'Pauli Y Gate',
+    bg: 'bg-[#cf63cf]',
     text: 'text-white',
     easyName: 'Phase and Bit Flipper',
-    work: 'Flips the state and changes the phase angle at the same time, using the imaginary number i. |0⟩ to |1⟩, or |1⟩ to |0⟩, but with a 180-degree phase shift.',
-    undo: 'Applying it twice returns the qubit to its original state up to phase.',
+    work: 'Flips the qubit from |0⟩ to |1⟩ or from |1⟩ to |0⟩, like the X gate. It also adds a phase change, represented by the imaginary number i. In nutshell, |0⟩ becomes i|1⟩, and |1⟩ becomes -i|0⟩.',
+    undo: 'Applying the Y gate two times brings the qubit back to its starting state.',
     type: 'single'
   },
   {
     id: 'z',
-    name: 'Z',
-    bg: 'bg-[#FFE66D]',
+    name: 'Pauli Z Gate',
+    bg: 'bg-[#e8b213]',
     text: 'text-black',
     easyName: 'Phase Flipper',
     work: 'Flips the phase sign from plus to minus if the qubit is in the |1⟩ state (but the possibility of measuring it remains unchanged). |0⟩ stays |0⟩, but |1⟩ becomes -|1⟩.',
@@ -43,28 +41,28 @@ const gates = [
   },
   {
     id: 's',
-    name: 'S',
-    bg: 'bg-[#1DD1A1]',
-    text: 'text-black',
-    easyName: 'Phase Quarter-Turn',
+    name: 'Phase Gate',
+    bg: 'bg-[#59c059]',
+    text: 'text-white',
+    easyName: '1/4th Phase Turn',
     work: 'Adds a 90-degree phase angle shift to the |1⟩ state.',
     undo: 'Applying it four times returns to the original state.',
     type: 'single'
   },
   {
     id: 't',
-    name: 'T',
-    bg: 'bg-[#F368E0]',
+    name: 'π/8 Gate',
+    bg: 'bg-[#ff6680]',
     text: 'text-white',
-    easyName: 'Phase Eighth-Turn',
+    easyName: '1/8th Phase Turn',
     work: 'Adds a 45-degree phase angle shift to the |1⟩ state.',
     undo: 'Applying it eight times returns to the original state.',
     type: 'single'
   },
   {
     id: 'cx',
-    name: 'CX',
-    bg: 'bg-[#EE5253]',
+    name: 'Controlled-Not Gate',
+    bg: 'bg-cyan-500',
     text: 'text-white',
     easyName: 'Controlled-NOT',
     work: 'Flips the target qubit only if the control qubit is |1⟩. If the control is |0⟩, the target remains unchanged.',
@@ -73,34 +71,45 @@ const gates = [
   },
   {
     id: 'cz',
-    name: 'CZ',
-    bg: 'bg-[#5F27CD]',
+    name: 'Controlled-Z Gate',
+    bg: 'bg-rose-500',
     text: 'text-white',
     easyName: 'Controlled-Z',
     work: 'Flips the target phase only if both qubits are |1⟩. If either qubit is |0⟩, the target remains unchanged. |0⟩ stays |0⟩, but |1⟩ becomes -|1⟩.',
     undo: 'Repeating the operation across both qubits reverses the shift.',
-    type:"multi"
+    type: "multi"
   },
   {
     id: 'sw',
-    name: 'SW',
-    bg: 'bg-[#341F97]',
+    name: 'SWAP Gate',
+    bg: 'bg-fuchsia-500',
     text: 'text-white',
     easyName: 'State Swap',
     work: 'Swaps the quantum states of two separate qubits entirely. Like, one is |0⟩ and the other is |1⟩, they will switch places.',
     undo: 'Swapping the same two qubits again restores their positions.',
-    type: 'multi'
+    type: 'multi-two-qubit'
   },
   {
-    id: 'ch',
-    name: 'CH',
-    bg: 'bg-[#01A3A4]', 
+    id: 'ccx',
+    name: 'Controlled-Controlled-X Gate',
+    bg: 'bg-amber-500',
+    text: 'text-black',
+    easyName: 'Toffoli Gate',
+    work: 'Flips the target qubit only if both control qubits are |1⟩.',
+    undo: 'Applying the same Toffoli twice undoes it.',
+    type: 'multi-three-qubit'
+  },
+  {
+    id: 'ccz',
+    name: 'Controlled-Controlled-Z gate',
+    bg: 'bg-lime-600',
     text: 'text-white',
-    easyName: 'Controlled-Hadamard',
-    work: 'Puts the target qubit into a superposition state only if the control qubit is |1⟩. If the control is |0⟩, the target remains unchanged.',
-    undo: 'Running the exact two-qubit operation twice restores the original states.',
-    type: 'multi',
-  }
+    easyName: 'Toffoli Gate',
+    work: 'Flips the target qubit only if both control qubits are |1⟩.',
+    undo: 'Applying the same Toffoli twice undoes it.',
+    type: 'multi-three-qubit'
+  },
+
 ];
 
 export default gates;

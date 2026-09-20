@@ -14,27 +14,25 @@ const calcCompNum = (complex1, complex2) => {
     return [a * c - b * d, a * d + b * c];
 };
 
-// Main Part that compares gate matrix with Temp result matrix be inflating and forcing bigger Result matrix to match what
+// Main Part that compares gate matrix with Temp unitaryMatrix matrix by inflating and forcing bigger unitaryMatrix matrix to match what
 // gateMatrix's corresponding row and Column. Uses Bitwise operations. 
 const buildStepMatrix = (gateType, involvedQubits, numQubits, bigEndian = false) => {
     let gateMatrix = gateMatrics[gateType.toUpperCase()];
     if (gateType == "sw"){ gateMatrix = gateMatrics["SWAP"] }
 
     const gateLength = involvedQubits.length;     
-
-    const fullSize = Math.pow(2,numQubits);
+    const unitaryMatrixSize = Math.pow(2,numQubits);
     const gateMatrixSize = Math.pow(2,gateLength)
 
-    const result = Array.from({ length: fullSize }, () =>
-        Array.from({ length: fullSize }, () => [0, 0])
+    const unitaryMatrix = Array.from({ length: unitaryMatrixSize }, () =>
+        Array.from({ length: unitaryMatrixSize }, () => [0, 0])
     );
 
     const bitPos = involvedQubits.map(q =>
         bigEndian ? (numQubits - 1 - q) : q
     );
 
-    for (let i = 0; i < fullSize; i++) {
-
+    for (let i = 0; i < unitaryMatrixSize; i++) {
         for (let row = 0; row < gateMatrixSize; row++) {
             let fullRow = i;
             let gateColIndex = 0;
@@ -47,11 +45,11 @@ const buildStepMatrix = (gateType, involvedQubits, numQubits, bigEndian = false)
                 if ((i >> bitPos[b]) & 1) {
                     gateColIndex = gateColIndex | (1 << (gateLength - 1 - b));
                 }
-            }
-            result[fullRow][i] = gateMatrix[row][gateColIndex];
+            } 
+            unitaryMatrix[fullRow][i] = gateMatrix[row][gateColIndex];
         }
     }
-    return result;
+    return unitaryMatrix;
 };
 
 

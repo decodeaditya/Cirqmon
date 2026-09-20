@@ -1,73 +1,54 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
+import useSound from 'use-sound'
+import { Link } from 'react-router-dom'
+import { DragDropProvider } from '@dnd-kit/react'
 import Canvas from '../blocks/Canvas'
-import SidebarBtn from '../components/SidebarBtn'
+import NavbarBtn from '../components/NavbarBtn'
 import GatesTray from '../blocks/GatesTray'
 import AdjustGrid from '../tools/AdjustGrid'
 import MultiGateModal from '../blocks/MultiGateModal'
-
-import useSound from 'use-sound'
-
-import background1 from '../assets/canvas_backgrounds/bg1.jpg'
-import background2 from '../assets/canvas_backgrounds/bg2.jpg'
-import background3 from '../assets/canvas_backgrounds/bg3.jpg'
-
-import { DragDropProvider } from '@dnd-kit/react'
-
 import audio_url from "../assets/audio/background_audio.mp3"
-
-import { useNavigate } from 'react-router-dom'
-
-import musicIcon from '../assets/icons/music.webp'
+import musicPlay from '../assets/icons/musicPlay.webp'
+import musicStop from '../assets/icons/musicStop.png'
 import sceneryIcon from '../assets/icons/scene.webp'
 import qubitsIcon from '../assets/icons/nuclei.webp'
-import homeIcon from '../assets/icons/home.webp'
-
 import gates from '../data/gatesWiki';
 import circuitConfig from '../data/config'
+import { AnimatePresence, motion } from "framer-motion";
+import chick from '../assets/icons/babyChick.gif'
+import Tooltip from '../components/Tooltip'
+import ExecuteCircuit from '../tools/ExecuteCircuit'
+import canvasBg1 from '../assets/canvas_bg_32.jpg'
+import canvasBg2 from '../assets/canvas_bg_45.jpg'
+import { useAlert } from '../Context/AlertContext'
 
 const Playground = () => {
 
-    const navigate = useNavigate()
-
-    const backgrounds = [
-        background1,
-        background2,
-        background3
+    const backgroundImgs = [
+        canvasBg1,
+        canvasBg2,
     ]
 
-    const [background, setBackground] = useState(0);
     const [musicPlaying, setMusicPlaying] = useState(false);
     const [qubitsAdjustOpen, setQubitsAdjustOpen] = useState(false);
-
-
-    const [multiQubitData, setmultiQubitData] = useState(null);
-
+    const [multiQubitData, setMultiQubitData] = useState(null);
     const [play, { stop }] = useSound(audio_url, { volume: 0.5, loop: true, });
+    const [bgImg, setBgImg] = useState(backgroundImgs[0])
+    const { showAlert } = useAlert(); 
 
-    const changeBackground = () => {
-        setBackground(((lastBg) => (lastBg + 1) % backgrounds.length));
-    };
-
-    const manageMusic = async () => {
-        await setMusicPlaying(!musicPlaying);
-
-        if (!musicPlaying) {
-            play();
-        } else {
-            stop();
-        }
+    const manageMusic = () => {
+        setMusicPlaying(!musicPlaying);
+        if (!musicPlaying) play();
+        else stop();
     }
 
-    const toggleQubitsAdjust = () => {
-        setQubitsAdjustOpen(!qubitsAdjustOpen);
-    }
-
+    const changeBackground = () => setBgImg((prev) => backgroundImgs[(backgroundImgs.indexOf(prev) + 1) % backgroundImgs.length]);
+    const toggleQubitsAdjust = () => setQubitsAdjustOpen(!qubitsAdjustOpen);
 
     const buttons = [
-        { id: 1, text: 'Home', icon: homeIcon, onclick: () => { navigate("/") } },
-        { id: 2, text: 'Music', icon: musicIcon, onclick: manageMusic },
-        { id: 3, text: 'Scenery', icon: sceneryIcon, onclick: changeBackground },
-        { id: 4, text: 'Qubits', icon: qubitsIcon, onclick: toggleQubitsAdjust },
+        { id: 1, text: musicPlaying ? 'Music: Playing' : 'Music: Paused', icon: musicPlaying ? musicStop : musicPlay, onTap: manageMusic },
+        { id: 2, text: 'Change Background', icon: sceneryIcon, onTap: changeBackground },
+        { id: 3, text: 'Adjust Circuit', icon: qubitsIcon, onTap: toggleQubitsAdjust },
     ]
 
     const [circuit, setCircuit] = useState({
@@ -76,167 +57,204 @@ const Playground = () => {
         2: [null, null, null, null],
     });
 
+    const clearMultiGate = (prevCircuit, qubitId) => {
+        const nextCircuit = { ...prevCircuit };
+
+        nextCircuit[qubitId].forEach((cell, stepIdx) => {
+            if (cell?.type !== 'multi') return;
+            const involvedQubits = [...cell.controls, cell.target]
+
+            involvedQubits.forEach((qubit) => {
+                if (!nextCircuit[qubit]) return;
+
+                nextCircuit[qubit] = [...nextCircuit[qubit]];
+                nextCircuit[qubit][stepIdx] = null;
+            })
+        })
+        return nextCircuit
+    }
+
 
     const addNewQubit = () => {
-        const newQubitID = Object.keys(circuit).length;
+        const newQubitId = Object.keys(circuit).length;
+        const stepsCount = circuit[0].length
 
-        if (newQubitID >= circuitConfig.maxQubits) return; // Maximum qubits for Now
-        setCircuit((oldCircuit) => ({ ...oldCircuit, [newQubitID]: Array(circuit[0].length).fill(null) }));
+        if (newQubitId >= circuitConfig.maxQubits) return; // Maximum qubits for now
+        setCircuit((prev) => ({
+            ...prev,
+            [newQubitId]: Array(stepsCount).fill(null)
+        }))
     };
 
     const removeQubit = () => {
-
         const keys = Object.keys(circuit);
-        const qubitToRemove = Number(keys[keys.length - 1]);
+        const qubitToRemove = Math.max(...keys)
 
-        if (keys.length <= 1) return; // Must have at least 1 Qubit
+        if (qubitToRemove < circuitConfig.minQubit) return;
 
         setCircuit((oldCircuit) => {
-            const copy = { ...oldCircuit };
-            delete copy[qubitToRemove];
-            return copy;
+            let nextCircuit = clearMultiGate(oldCircuit, qubitToRemove)
+            const { [qubitToRemove]: _, ...newCircuit } = nextCircuit
+            return newCircuit
         });
     };
 
     const addCircuitNode = () => {
+        if (circuit[0]?.length >= circuitConfig.maxSteps) return // Maximum steps for Now
         const oldCircuit = { ...circuit };
 
-        if (oldCircuit[0].length >= circuitConfig.maxSteps) return; // Maximum steps for Now
-
-        for (const key in oldCircuit) {
-            oldCircuit[key].push(null);
+        for (const qubit in oldCircuit) {
+            oldCircuit[qubit].push(null);
         }
         setCircuit(oldCircuit);
     }
 
     const removeCircuitNode = () => {
-
+        if (circuit[0].length <= circuitConfig.minSteps) return; // Minimum step for Now
         const oldCircuit = { ...circuit };
 
-        if (oldCircuit[0].length <= circuitConfig.minSteps) return;
-
-        for (const key in oldCircuit) {
-            oldCircuit[key].pop();
+        for (const qubit in oldCircuit) {
+            oldCircuit[qubit].pop();
         }
         setCircuit(oldCircuit);
     }
 
 
     const handleDragEnd = (event) => {
-
+        const totalQubits = Object.keys(circuit).length;
         const { source, target } = event.operation;
-
         if (!source || !target) return;
 
         const gateId = String(source.id);
         const targetId = String(target.id);
 
-        if (!targetId.startsWith('socket-')) return;
+        if (totalQubits < gateId.length) {
+            showAlert('This gate need more qubits','Add more qubits and drop add this Gate!')
+            return;
+        }
+
+        if (!targetId.startsWith('node-')) return;
 
         const [_, qubitId, stepIdx] = targetId.split('-');
 
         const gate = gates.find(g => g.id.toLowerCase() === gateId.toLowerCase());
 
-        if (gate.type === 'multi') {
-            setmultiQubitData({
+        if (gate.type.includes("multi") && totalQubits >= gateId.length) {
+            setMultiQubitData({
                 gateId,
                 qubitId: parseInt(qubitId),
                 stepIdx: parseInt(stepIdx)
             });
+            return;
+        }
 
+        if(circuit[qubitId][stepIdx]){
+            showAlert("Step in this Qubit is already Engaged","Remove existing gate to add new one!")
             return;
         }
 
         setCircuit((prevCircuit) => {
-
             const nextCircuit = { ...prevCircuit };
-
-            nextCircuit[qubitId] = [...prevCircuit[qubitId]];
             nextCircuit[qubitId][stepIdx] = { type: 'single', gate: gateId };
-
             return nextCircuit;
         });
     };
 
-    const handleConfirmMultiGate = (controlQubit, targetQubit) => {
-
+    const handleConfirmMultiGate = (controls, target) => {
         if (!multiQubitData) return;
-
         const { gateId, stepIdx } = multiQubitData;
+        if (circuit[target][stepIdx] || controls.some(c=>circuit[c][stepIdx])){
+            showAlert("Step in this Qubit is already Engaged","Remove existing gate to add new one!")
+            return;
+        } 
 
         setCircuit((prevCircuit) => {
-
             const nextCircuit = { ...prevCircuit };
 
-            nextCircuit[controlQubit] = [...prevCircuit[controlQubit]];
-            nextCircuit[targetQubit] = [...prevCircuit[targetQubit]];
+            controls.forEach((control) => {
+                nextCircuit[control][stepIdx] = {
+                    type: 'multi',
+                    gate: gateId,
+                    role: 'control',
+                    controls: controls,
+                    target: target,
+                    pairedWith: target
+                };
+            });
 
-            nextCircuit[controlQubit][stepIdx] = {
-                type: 'multi',
-                gate: gateId,
-                role: 'control',
-                pairedWith: targetQubit
-            };
-
-            nextCircuit[targetQubit][stepIdx] = {
+            nextCircuit[target][stepIdx] = {
                 type: 'multi',
                 gate: gateId,
                 role: 'target',
-                pairedWith: controlQubit
+                controls: controls,
+                target: target,
+                pairedWith: controls
             };
-
             return nextCircuit;
         });
-
-        setmultiQubitData(null);
+        setMultiQubitData(null);
     };
 
 
-
     const removeGate = (qubitId, stepId) => {
-
         setCircuit((prevCircuit) => {
+            const nextCircuit = { ...prevCircuit }
+            const clickedCell = nextCircuit[qubitId][stepId];
 
-            const nextCircuit = { ...prevCircuit };
-            const currentCell = nextCircuit[qubitId][stepId];
+            if (!clickedCell) return nextCircuit;
 
-            if (!currentCell) return prevCircuit;
+            if (clickedCell.type === 'multi') {
+                clickedCell.controls.forEach((control) => {
+                    nextCircuit[control][stepId] = null
+                })
 
-            if (currentCell.type === 'multi') {
-
-                const partnerQubit = currentCell.pairedWith;
-
-                nextCircuit[qubitId] = [...prevCircuit[qubitId]]
-                nextCircuit[qubitId][stepId] = null
-
-                if (nextCircuit[partnerQubit]) {
-                    nextCircuit[partnerQubit] = [...prevCircuit[partnerQubit]];
-                    nextCircuit[partnerQubit][stepId] = null;
-                }
+                nextCircuit[clickedCell.target][stepId] = null
 
             } else {
-
-                nextCircuit[qubitId] = [...prevCircuit[qubitId]]
                 nextCircuit[qubitId][stepId] = null
-
             }
 
             return nextCircuit;
         });
-    };
-    
-
+    }
     return (
         <DragDropProvider onDragEnd={handleDragEnd}>
+            <div
+                style={{
+                    backgroundImage: `url(${bgImg})`,
+                }}
+                className="fixed inset-0 flex flex-col gap-6 bg-cover bg-center bg-no-repeat bg-fixed px-4"
+            >
+                <div className="h-screen w-full flex flex-col overflow-hidden">
+                    <div className='flex flex-1 gap-x-7 p-5 justify-center min-h-0'>
+                        <Canvas
+                            circuit={circuit}
+                            setCircuit={setCircuit}
+                            removeGate={removeGate}
+                        />
+                        <div>
+                            <GatesTray />
+                        </div>
+                    </div>
 
-            <div style={{ backgroundImage: `url(${backgrounds[background]})` }} className={`bg-cover bg-center bg-fixed bg-no-repeat w-screen
-                 h-screen items-center justify-center p-6 relative transition-all duration-500 flex flex-col sm:flex-row`}>
+                    <div className="flex justify-between items-center px-4 pb-4 shrink-0">
+                        {/* Logo */}
+                        <Link to="/" className='bg-black/30 backdrop-blur rounded-2xl px-6 py-2 transition hover:rotate-3 tracking-tighter hover:tracking-tight h-max'>
+                            <span className="text-white font-black text-2xl">
+                                Cirqmon<span className="text-yellow-400">.</span>
+                            </span>
+                        </Link>
 
-                <GatesTray />
+                        <div className="flex items-center gap-5">
+                            <Sidebar buttons={buttons} />
+                            <ExecuteCircuit
+                                circuit={circuit}
+                            />
+                        </div>
+                    </div>
 
-                <Canvas height="80%" width="3/4" circuit={circuit} setCircuit={setCircuit} removeGate={removeGate} />
+                </div>
 
-                <Sidebar buttons={buttons} />
 
                 <QubitsAdjustSection
                     qCount={Object.keys(circuit).length}
@@ -253,18 +271,11 @@ const Playground = () => {
                     isOpen={multiQubitData !== null}
                     modalData={multiQubitData}
                     maxQubits={Object.keys(circuit).length}
-                    onClose={() => setmultiQubitData(null)}
+                    onClose={() => setMultiQubitData(null)}
                     onConfirm={handleConfirmMultiGate}
                 />
 
             </div>
-
-
-            <div className="bg-yellow-300 rounded-3xl fixed bottom-10 left-8  px-6 py-2 cursor-pointer transition-all
-             duration-150 shadow-[0_4px_0_0_#B8860B,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:scale(1.5)">
-                <span className="text-xl font-bold text-slate-900 ">CIRQMON</span>
-            </div>
-
         </DragDropProvider>
     )
 }
@@ -272,9 +283,9 @@ const Playground = () => {
 
 const Sidebar = ({ buttons }) => {
     return (
-        <div className="gap-4 justify-center bg-black/10 backdrop-blur-3xl shadow-[0px_7px_29px_0px_rgba(100,100,111,0.2)] p-6 flex sm:w-max sm:flex-col rounded-r-[50px]">
+        <div className={`flex justify-center gap-4`}>
             {buttons.map((btn) => (
-                <SidebarBtn key={btn.id} btn={btn} onClick={btn.onclick} />
+                <NavbarBtn key={btn.id} btn={btn} onClick={btn.onTap} />
             ))}
         </div>
     )
@@ -282,24 +293,41 @@ const Sidebar = ({ buttons }) => {
 
 const QubitsAdjustSection = ({ qCount, nCount, isOpen, onClose, addQubit, removeQubit, addNode, removeNode }) => {
     return (
-        <div className="fixed bottom-6 right-6 z-9999 flex flex-col items-end select-none pointer-events-none">
+        <AnimatePresence>
+            <div className="fixed bottom-10 right-10 z-9999 select-none pointer-events-none">
+                {isOpen && (
+                    <>
+                        <div
+                            className="fixed inset-0 z-[-1] pointer-events-auto backdrop-blur bg-black/20"
+                            onClick={onClose}
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.7, y: 40 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.7, y: 40 }}
+                            transition={{ type: "spring", stiffness: 350, damping: 20 }}
+                            className='pointer-events-auto'
+                        >
+                            <Tooltip text="Don't poke me, Adjust the circuit!" isRight={false}>
+                                <img src={chick} width={120} className='relative -mb-5 z-20 ml-5' />
+                            </Tooltip>
+                            <div className='w-72 bg-slate-400/90 backdrop-blur rounded-4xl p-4 shadow-2xl
+                            flex flex-col gap-4'>
+                                <AdjustGrid
+                                    qCount={qCount}
+                                    nCount={nCount}
+                                    addQubit={addQubit}
+                                    removeQubit={removeQubit}
+                                    addNode={addNode}
+                                    removeNode={removeNode}
+                                />
+                            </div>
 
-            {isOpen && (
-                <div
-                    className="fixed inset-0 z-[-1] pointer-events-auto"
-                    onClick={onClose}
-                />
-            )}
-
-            <div
-                className={`
-          pointer-events-auto mb-4 w-64 bg-white/40 backdrop-blur-3xl rounded-3xl p-4 shadow-[5px_5px_0px_0px_#000] flex flex-col gap-4 transition-all duration-150 origin-bottom
-          ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-75 translate-y-8 pointer-events-none'}
-        `}
-            >
-                <AdjustGrid qCount={qCount} nCount={nCount} addQubit={addQubit} removeQubit={removeQubit} addNode={addNode} removeNode={removeNode} />
+                        </motion.div>
+                    </>
+                )}
             </div>
-        </div>
+        </AnimatePresence>
     )
 }
 

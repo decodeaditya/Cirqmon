@@ -5,7 +5,6 @@ import colorWheel from "../assets/hue_color_wheel.png"
 const QSphereRadii = 2
 
 const generateEquatorPoints = (radius, segments = 1000) => {
-
     const points = [];
 
     for (let i = 0; i <= segments; i++) {
@@ -75,13 +74,13 @@ const QSphere = ({ nodesData }) => {
     const equatorPoints = generateEquatorPoints(QSphereRadii);
 
     return (
-        <div className='bg-black/90 relative flex-1 flex flex-col h-full rounded-4xl
+        <div className='bg-black/90 relative flex-1 flex flex-col h-full 
          shadow-[inset_0_4px_12px_rgba(0,0,0,0.9),0_8px_8px_-4px_rgba(0,0,0,0.7),0_2px_4px_rgba(255,255,255,0.03)] backdrop-blur-md'>
 
             <Canvas camera={{ position: [0, 1, 4] }}>
 
                 <OrbitControls enableZoom={true} />
-                <ambientLight intensity={0.5} />
+                <ambientLight intensity={1} />
                 <pointLight position={[10, 100, 10]} intensity={1} />
 
                 <group>

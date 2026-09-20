@@ -1,11 +1,11 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import { useState} from 'react';
 import './App.css';
 import Playground from './pages/Playground';
 import Homepage from './pages/HomePage';
 import Writings from './pages/Writings';
-import { BrowserRouter, Route, Routes, useLocation, useNavigation } from 'react-router';
+import { BrowserRouter, Route, Routes, useLocation} from 'react-router';
 
-import default_bg from './assets/canvas_backgrounds/bg1.jpg'
+import default_bg from './assets/bg1.jpg'
 import alienFace from './assets/icons/alienFace.webp'
 import { AnimatePresence, motion } from 'framer-motion';
 

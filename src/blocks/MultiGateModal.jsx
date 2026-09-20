@@ -1,87 +1,123 @@
-import React, { useState } from 'react';
-
+import { useState } from 'react';
+import gates from '../data/gatesWiki';
+import hippo from '../assets/icons/hippo-blinking.gif'
+import { useAlert } from '../Context/AlertContext';
+ 
 const MultiGateModal = ({ isOpen, modalData, maxQubits, onConfirm, onClose }) => {
 
-    if (!isOpen || !modalData) return null;
+    if (!isOpen || !modalData) return;
+    const { gateId, qubitId } = modalData;
+    const { showAlert } = useAlert();
 
-    const { gateId, qubitId, stepIdx } = modalData;
-    const [controlQubit, setControlQubit] = useState(qubitId);
-
-    const [targetQubit, setTargetQubit] = useState(
-        qubitId < (maxQubits - 1) ? qubitId + 1 : 0
-    );
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        if (controlQubit === targetQubit) {
-            alert("Control and Target qubits cannot be the same!");
-            return;
-        }
-
-        onConfirm(controlQubit, targetQubit);
+    // how many gates needed
+    const getRequiredControls = (gate) => {
+        const gateData = gates.find(g => g.id === gate)
+        if (gateData.type.includes("three")) return 2
+        if (gateData.type.includes("two")) return 1
+        return 1;
     };
 
-    const qubitOptions = Array.from({ length: maxQubits }, (_, i) => i);
+    const numControls = getRequiredControls(gateId);
+
+    const defaultControls = Array.from({ length: numControls }, (_, i) => (qubitId + i) % maxQubits)
+    const defaultTarget = (qubitId + numControls) % maxQubits
+    const [controls, setControls] = useState(defaultControls);
+    const [target, setTarget] = useState(defaultTarget);
+
+    const handleControlChange = (index, value) => {
+        const newControls = [...controls];
+        newControls[index] = parseInt(value);
+        setControls(newControls);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        const allQubits = [...controls, target];
+        const unique = new Set(allQubits);
+
+        if (unique.size !== allQubits.length) {
+            showAlert('You chose same qubit for multiple roles', 'Please select different qubits for each control and target.')
+            return;
+        }
+        onConfirm(controls, target);
+    };
+
+    const qubitOptions = [...Array(maxQubits).keys()]
+
+          const roughBorders = `
+  rounded-tr-[10px_225px] 
+  rounded-br-[255px_15px] 
+  rounded-bl-[15px_225px]
+  rounded-tl-[255px_15px]`
+
 
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex justify-center items-center z-[9999] select-none">
+        <div className="fixed inset-0 bg-amber-100/10 backdrop-blur-sm flex flex-col justify-center items-center z-9999">
+            <img src={hippo} width={120}/>
+            <div className={`border-4 border-white/20 w-full max-w-md ${roughBorders} p-5 shadow-2xl mx-4 bg-amber-100 bg-blend-overlay`}>
 
-            <div className="bg-indigo-400 w-full max-w-sm rounded-xl p-5 shadow-2xl transition-all duration-200 animate-in fade-in zoom-in-90 mx-4">
+                <p className="text-sm text-amber-800 font-medium text-center">
+                    Configure the gate now
+                </p>
+                <h3 className="font-black text-2xl text-amber-900 mb-5 text-center">
+                    Applying {gateId.toUpperCase()} Gate
+                </h3>
 
-                <h3 className="font-black text-2xl leading-none text-white/90 mb-4 border-b-4 border-black/15 pb-2">{gateId.toUpperCase()} Gate - Step {stepIdx + 1}</h3>
-              
+
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-4 flex flex-col gap-1.5 bg-white border-1 border-black/20 rounded-xl p-3 shadow-inner">
-
-                        <label className="text-xs font-black uppercase tracking-wider text-zinc-600">Control Qubit</label>
+                    {controls.map((controlQubit, index) => (
+                        <div key={index} className="bg-white/80 border border-black/20 rounded-2xl p-3 mb-3">
+                            <label className="text-xs font-black text-zinc-600 uppercase mb-1 block">
+                                Control {numControls > 1 ? index + 1 : ''}
+                            </label>
+                            <select
+                                value={controlQubit}
+                                onChange={(e) => handleControlChange(index, e.target.value)}
+                                className="w-full border-2 border-black/20 rounded-xl p-2 font-bold
+                                text-zinc-800 outline-none cursor-pointer bg-yellow-50"
+                            >
+                                {qubitOptions.map(q => (
+                                    <option key={q} value={q}>Qubit {q}</option>
+                                ))}
+                            </select>
+                        </div>
+                    ))
+                    }
+                    <div className="bg-white/80 border border-black/20 rounded-2xl p-3 mb-5">
+                        <label className="text-xs font-black text-zinc-600 uppercase mb-1 block">Target Qubit</label>
                         <select
-                            value={controlQubit}
-                            onChange={(e) => setControlQubit(parseInt(e.target.value))}
-                            className="w-full border-2 border-black/20 rounded-xl p-2 font-bold bg-zinc-50 text-zinc-800 outline-none cursor-pointer focus:border-indigo-400 transition-colors"
+                            value={target ?? 0}
+                            onChange={(e) => setTarget(parseInt(e.target.value))}
+                            className="w-full border-2 border-black/20 rounded-xl p-2 font-bold bg-yellow-50 
+                                text-zinc-800 outline-none cursor-pointer"
                         >
                             {qubitOptions.map(q => (
                                 <option key={q} value={q}>Qubit {q}</option>
                             ))}
                         </select>
-
                     </div>
 
-                    <div className="mb-4 flex flex-col gap-1.5 bg-white border-1 border-black/20 rounded-xl p-3 shadow-inner">
-                        <label className="text-xs font-black uppercase tracking-wider text-zinc-600">Target Qubit</label>
-                        <select
-                            value={targetQubit}
-                            onChange={(e) => setTargetQubit(parseInt(e.target.value))}
-                            className="w-full border-2 border-black/20 rounded-xl p-2 font-bold bg-zinc-50 text-zinc-800 outline-none cursor-pointer focus:border-indigo-400 transition-colors"
-                        >
-                            {qubitOptions.map(q => (
-                                <option key={q} value={q}>Qubit {q}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="flex gap-2.5 ">
+                    <div className="flex gap-2">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-1.5 w-1/2 bg-white border border-black/20 rounded-xl font-bold text-zinc-700 hover:bg-zinc-100 active:translate-y-0.5 transition-all cursor-pointer"
+                            className="w-1/2 py-3 bg-red-400 font-bold text-white 
+                            hover:bg-red-500 active:translate-y-0.5 transition cursor-pointer border-3 border-amber-800/40"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-1.5 w-1/2 bg-zinc-900 border border-black text-white rounded-xl font-black tracking-wide hover:bg-black active:translate-y-0.5 transition-all cursor-pointer"
+                            className="w-1/2 py-2 bg-emerald-400 font-bold text-white 
+                            hover:bg-emerald-500 active:translate-y-0.5 transition cursor-pointer border-3 border-amber-800/40"
                         >
                             Confirm Gate
                         </button>
                     </div>
                 </form>
-
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
-
-
 
 export default MultiGateModal;

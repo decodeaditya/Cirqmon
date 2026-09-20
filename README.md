@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-    <img src="./src/assets/text_logo.JPG" width = '150px' style='border-radius:15px'/>
+    <img src="./src/assets/text_logo.png" width = '150px' style='border-radius:15px'/>
 </p>
 
 <p align="center"><em>Qubits made Fun! </em></p>
@@ -18,7 +18,7 @@
 
 Cirqmon is Web based Quantum circuit maker, whose simulator and circuit execution happens inside browser without any backend, Execution is written from Scratch. Also its based on 3d Glassmorphism and more colorful, so that learning Quantum computing don't feel annoying. 
 
-![A Snapshot](./src/assets/tour_shots/DemoGIF.gif)
+![A Snapshot](./src/assets/tour_shots/snapshot.gif)
 
 
 <p align="center">
@@ -40,27 +40,27 @@ This project aims to be a simple but complete playground where you can:
 - ### **Drag-and-drop circuit builder**  
   Place single and multi-qubit gates on a visual canvas.
 
-  ![Canvas](./src/assets/tour_shots/Canvas.png)
+  ![Canvas](./src/assets/tour_shots/canvas.png)
 
 - ### **Vibe and Controls**  
   Here you can control Number of Qubits and Nodes. Also change wallpaper or work while listening to Audio, so you don't lose Vibe. 
 
-  ![Vibe and Controls](./src/assets/tour_shots/Controls.png)  
+  ![Vibe and Controls](./src/assets/tour_shots/navigation.png)  
 
   - ### **Includes Foundational Gates**  
-  Builder works with Gates like `H`, `X`, `Y`, `Z`, `S`, `T`, `CX`, `CZ`, `SWAP` and more.  
+  Builder works with Gates like `H`, `X`, `Y`, `Z`, `S`, `T`, `CX`, `CZ`, `SWAP`, `CCX` and `CCZ`.  
 
-  ![Gates](./src/assets/tour_shots/Gates.png)  
+  ![Gates](./src/assets/tour_shots/gates.png)  
 
 - ### **Get Brief Introduction**  
   Click on gate (or Drag to use) to Know about that Gate in Brief.   
 
-  ![Gates](./src/assets/tour_shots/GateIntro.png)
+  ![Gates](./src/assets/tour_shots/gateinfo.png)
 
 - ### **Statevector simulation**  
   Press Alien's face on bottom-right to See amplitudes and probabilities as you build.  
 
-   ![Run from Here](./src/assets/tour_shots/RunButton.png)
+   ![Run from Here](./src/assets/tour_shots/executeBtn.png)
 
 
 - ### **Q-Sphere Visualization**  
