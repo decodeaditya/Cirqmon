@@ -61,7 +61,7 @@ rounded-bl-[14px_34px]
 
                         {/* Description */}
                         <div className="bg-orange-100 border-2 border-black/10 rounded-2xl p-3 mb-3">
-                            <p className="text-sm font-bold text-zinc-800 leading-relaxed">
+                            <p className="font-bold text-zinc-800 leading-relaxed">
                                 {inspectedGate.work}
                             </p>
                         </div>

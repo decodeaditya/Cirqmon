@@ -15,8 +15,8 @@ const gates = [
     bg: 'bg-[#9966ff]',
     text: 'text-white',
     easyName: 'Bit Flipper',
-    work: 'It Flips State: Either: |0⟩ to |1⟩, or |1⟩ to |0⟩. It works like the classic computer NOT gate.',
-    undo: 'Applying it NOT Gate twice brings you back to original state.',
+    work: 'It Flips State, Either: |0⟩ to |1⟩, or |1⟩ to |0⟩. It works like the classic computer NOT gate.',
+    undo: 'Dropping the NOT Gates twice brings you back to original state.',
     type: 'single'
   },
   {
@@ -45,8 +45,8 @@ const gates = [
     bg: 'bg-[#59c059]',
     text: 'text-white',
     easyName: '1/4th Phase Turn',
-    work: 'Adds a 90-degree phase angle shift to the |1⟩ state.',
-    undo: 'Applying it four times returns to the original state.',
+    work: 'Adds a 90-degree phase shift to the |1⟩ part of a qubit. For example, it changes 1/√2(|0⟩ + |1⟩) into 1/√2(|0⟩ + i|1⟩). It does not change the chance of measuring 0 or 1',
+    undo: 'Placing S gate four times in in a row returns the qubits into original state.',
     type: 'single'
   },
   {
@@ -55,8 +55,8 @@ const gates = [
     bg: 'bg-[#ff6680]',
     text: 'text-white',
     easyName: '1/8th Phase Turn',
-    work: 'Adds a 45-degree phase angle shift to the |1⟩ state.',
-    undo: 'Applying it eight times returns to the original state.',
+    work: 'Adds a 45-degree phase angle shift to the |1⟩ state. By default the State is 1/√2(|0⟩ + |1⟩), but after applying the gate it becomes 1/√2(|0⟩ + e^(π/4 * i)|1⟩). It does not change measurement possibilites.',
+    undo: 'Applying T gate eight times returns to the original state. of the qubit i.e 1/√2(|0⟩ + |1⟩)',
     type: 'single'
   },
   {
@@ -65,7 +65,7 @@ const gates = [
     bg: 'bg-cyan-500',
     text: 'text-white',
     easyName: 'Controlled-NOT',
-    work: 'Flips the target qubit only if the control qubit is |1⟩. If the control is |0⟩, the target remains unchanged.',
+    work: 'Flips the target qubit only if the control qubit is |1⟩. If the control is |0⟩, the target remains unchanged. For example,  if control is |1⟩ and target is |0⟩, it becomes |1⟩, else nothing changes.',
     undo: 'Applying the exact same pair control loop twice undoes it.',
     type: 'multi'
   },
@@ -75,8 +75,8 @@ const gates = [
     bg: 'bg-rose-500',
     text: 'text-white',
     easyName: 'Controlled-Z',
-    work: 'Flips the target phase only if both qubits are |1⟩. If either qubit is |0⟩, the target remains unchanged. |0⟩ stays |0⟩, but |1⟩ becomes -|1⟩.',
-    undo: 'Repeating the operation across both qubits reverses the shift.',
+    work: 'Flips the target phase only if both control and target qubits are |1⟩. If either qubit is |0⟩, the target remains unchanged. For Example, If control is |1⟩ and target is |0⟩ it stays |0⟩, but |1⟩ becomes -|1⟩.',
+    undo: 'Applying same CZ gate two times returns the qubit to their previous states.',
     type: "multi"
   },
   {
@@ -85,7 +85,7 @@ const gates = [
     bg: 'bg-fuchsia-500',
     text: 'text-white',
     easyName: 'State Swap',
-    work: 'Swaps the quantum states of two separate qubits entirely. Like, one is |0⟩ and the other is |1⟩, they will switch places.',
+    work: 'Swaps the quantum states of two separate qubits entirely. Like, one is |0⟩ and the other is |1⟩, they will switch places and become |1⟩ and |0⟩ respectively.',
     undo: 'Swapping the same two qubits again restores their positions.',
     type: 'multi-two-qubit'
   },
@@ -95,8 +95,8 @@ const gates = [
     bg: 'bg-amber-500',
     text: 'text-black',
     easyName: 'Toffoli Gate',
-    work: 'Flips the target qubit only if both control qubits are |1⟩.',
-    undo: 'Applying the same Toffoli twice undoes it.',
+    work: 'Uses two control qubits to control an X gate. It flips the target qubit only when both control qubits are |1⟩.Its useless when either control is |0⟩.',
+    undo: 'Applying the same Toffoli gate twice returns all three qubits to their original states.',
     type: 'multi-three-qubit'
   },
   {
@@ -104,9 +104,9 @@ const gates = [
     name: 'Controlled-Controlled-Z gate',
     bg: 'bg-lime-600',
     text: 'text-white',
-    easyName: 'Toffoli Gate',
-    work: 'Flips the target qubit only if both control qubits are |1⟩.',
-    undo: 'Applying the same Toffoli twice undoes it.',
+    easyName: 'Double Controlled-Z',
+    work: 'Uses two control qubits to control a Z gate. When both control qubits are |1⟩, and the target is |1⟩, it becomes -|1⟩. Nothing happens if target or either control qubit is |0⟩.',
+    undo: 'Applying the same CCZ gate twice returns the qubits to their original states.',
     type: 'multi-three-qubit'
   },
 

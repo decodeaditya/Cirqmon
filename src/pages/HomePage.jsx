@@ -59,24 +59,24 @@ export default function Homepage() {
                 <Navbar Links={Links} />
 
                 {/* Hero */}
-                <section className="flex w-full justify-center text-center items-center gap-12 py-16 px-5 h-[100dvh] sm:h-full">
+                <section className="flex w-full justify-center text-center items-center gap-12 py-16 px-5 h-full">
                     <motion.div
                         initial={{ opacity: 0, y: 22 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, ease: "easeOut" }}
                     >
-                        <div className="font-black text-white text-7xl sm:text-8xl">
+                        <div className="font-black text-white text-5xl sm:text-8xl">
                             Quantum
                             <br />
                             computing
                             <br />
                             <span className="text-yellow-300" style={{ textShadow: "4px 4px 0 #7c4a03" }}>
-                                is fun now.
+                               with Colors.
                             </span>
                         </div>
 
                         <p className="mt-8 max-w-2xl text-lg font-medium sm:text-xl mb-6 text-white/90 leading-8">
-                            Drag gates, build circuits, and discover quantum ideas through
+                            Drop gates, build circuits, and discover quantum ideas doing
                             experiments that feel more like a game than a textbook.
                         </p>
 
