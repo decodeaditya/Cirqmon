@@ -1,4 +1,4 @@
-import React from 'react'
+import logo from '../assets/logo.png'
 import { Link } from 'react-router-dom'
 
 const Navbar = ({ Links }) => {
@@ -7,6 +7,7 @@ const Navbar = ({ Links }) => {
         <nav className="flex w-full items-center justify-between py-5 sm:py-7 px-4 sm:px-6">
             <Link to="/">
                 <span className="text-xl font-black sm:text-2xl tracking-tighter">
+                    <img src={logo} alt="Cirqmon Logo" className="h-10 w-10 mr-2 inline-block" />
                     Cirqmon<span className="text-yellow-400">.</span>
                 </span>
             </Link>

@@ -3,7 +3,7 @@
 // IDEA is simple, you merge the gates with actually are matrics using tensors and then you just step by step multiplies by state vector and tensor of each step; Will write blog on this
 // will optimise for multi Qubits
 
-const gateMatrics = {
+const gateMatrices = {
 
     // its for single Qubits for now.
 
@@ -85,5 +85,5 @@ const gateMatrics = {
 };
 
 
-export default gateMatrics;
+export default gateMatrices;
 

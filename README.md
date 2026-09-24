@@ -16,11 +16,11 @@
 
 ***
 
-Cirqmon is Web based Quantum circuit maker, whose simulator and circuit execution happens inside browser without any backend, Execution is written from Scratch. Also its based on 3d Glassmorphism and more colorful, so that learning Quantum computing don't feel annoying. 
+<b>Cirqmon</b> is a Web based Quantum circuit maker, whose simulator and circuit execution happens inside browser without any backend, Execution is written from Scratch. Also its based on 3d Glassmorphism and more colorful, so that learning Quantum computing doesn't feel annoying. 
 
 ![A Snapshot](./src/assets/tour_shots/snapshot.gif)
 
-
+<b>Please Note:</b> Use bigger screens to Play bcause Cirqmon is not intended for Mobile usage.
 <p align="center">
   <a href="https://cirqmon.vercel.app">
     <img src="https://forthebadge.com/badges/check-it-out.svg" alt="Check It Out" />
@@ -31,26 +31,33 @@ Cirqmon is Web based Quantum circuit maker, whose simulator and circuit executio
 ## Why Cirqmon is made?
 
 This project aims to be a simple but complete playground where you can:
-1. Visually build circuits.
-2. Understand and Visualize what the statevector is doing.
-3. Export real code you can run in Qiskit.
+1. Create quantum circuits effortlessly using an intuitive drag-and-drop canvas.
+2. Understand and Visualize what the circuit is doing using interactive Q Sphere and Graph.
+3. Export real Qiskit code you can immediately run in Python Qiskit SDK.
 
 ## What is Inside! 
 
 - ### **Drag-and-drop circuit builder**  
-  Place single and multi-qubit gates on a visual canvas.
+  Place single and multi-qubit gates on a visual canvas. For better experience do try Cirqmon in full screen.
 
   ![Canvas](./src/assets/tour_shots/Canvas.png)
+
+- ### **Includes Foundational Gates**  
+  Builder works with Gates like `H`, `X`, `Y`, `Z`, `S`, `T`, `CX`, `CZ`, `SWAP`, `CCX` and `CCZ`. 
+  
+  <b>Where to find Gates</b>: You can find the Quantum gates just by clicking the Owl on top right.
+
+  <b>Few Notes:</b>
+  * If you want to Use the gates drag them into Canvas.
+  * In order to remove the gate from circuit just tap on gate.
+
+  ![Gates](./src/assets/tour_shots/Gates.png)  
 
 - ### **Vibe and Controls**  
   Here you can control Number of Qubits and Nodes. Also change wallpaper or work while listening to Audio, so you don't lose Vibe. 
 
   ![Vibe and Controls](./src/assets/tour_shots/navigation.png)  
 
-  - ### **Includes Foundational Gates**  
-  Builder works with Gates like `H`, `X`, `Y`, `Z`, `S`, `T`, `CX`, `CZ`, `SWAP`, `CCX` and `CCZ`.  
-
-  ![Gates](./src/assets/tour_shots/Gates.png)  
 
 - ### **Get Brief Introduction**  
   Click on gate (or Drag to use) to Know about that Gate in Brief.   
@@ -58,7 +65,7 @@ This project aims to be a simple but complete playground where you can:
   ![Gates](./src/assets/tour_shots/gateinfo.png)
 
 - ### **Statevector simulation**  
-  Press Alien's face on bottom-right to See amplitudes and probabilities as you build.  
+  Press Cow's face on bottom-right to See amplitudes and probabilities as you build.  
 
    ![Run from Here](./src/assets/tour_shots/executeBtn.png)
 

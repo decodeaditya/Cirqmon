@@ -21,6 +21,7 @@ import ExecuteCircuit from '../tools/ExecuteCircuit'
 import canvasBg1 from '../assets/canvas_bg_32.jpg'
 import canvasBg2 from '../assets/canvas_bg_45.jpg'
 import { useAlert } from '../Context/AlertContext'
+import logo from '../assets/logo.png'
 
 const Playground = () => {
 
@@ -241,6 +242,7 @@ const Playground = () => {
                         {/* Logo */}
                         <Link to="/" className='bg-black/30 backdrop-blur rounded-2xl px-6 py-2 transition hover:rotate-3 tracking-tighter hover:tracking-tight h-max'>
                             <span className="text-white font-black text-2xl">
+                                <img src={logo} width={30} className='inline-block mr-2' />
                                 Cirqmon<span className="text-yellow-400">.</span>
                             </span>
                         </Link>
