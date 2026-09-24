@@ -125,7 +125,7 @@ export default function Homepage() {
                                 Have an idea?
                             </h2>
                             <p className="max-w-xl text-l text-white/70">
-                                Feedbacks, collaborations or even casual conversations are welcome. I am eager to listen!
+                                Feedbacks, collaborations or even casual conversations are welcome. I am eager to listen! Also You can read project logs on Hack Club's Stardance.
                             </p>
                         </div>
 
