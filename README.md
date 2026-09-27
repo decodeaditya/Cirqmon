@@ -22,7 +22,7 @@
 
 <b>Please Note:</b> Use bigger screens to Play bcause Cirqmon is not intended for Mobile usage.
 <p align="center">
-  <a href="https://cirqmon.vercel.app">
+  <a href="https://cirqmon.dev">
     <img src="https://forthebadge.com/badges/check-it-out.svg" alt="Check It Out" />
   </a>
 </p>
