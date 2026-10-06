@@ -19,6 +19,7 @@
     "lucide-react": "^1.24.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-helmet-async": "^3.0.0",
     "react-router-dom": "^7.18.1",
     "tailwindcss": "^4.3.1",
     "three": "^0.185.1",
