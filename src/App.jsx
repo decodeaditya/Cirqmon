@@ -4,7 +4,7 @@ import Playground from './pages/Playground';
 import Homepage from './pages/HomePage';
 import Writings from './pages/Writings';
 import SEO from '../src/SEO'
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router';
 
 import default_bg from './assets/bg1.jpg';
 import alienFace from './assets/icons/alienFace.webp';
@@ -51,6 +51,7 @@ const AnimatedRoutes = () => {
             </>
           } 
         />
+      <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>
   );

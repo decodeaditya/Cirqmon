@@ -1,15 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import PokemonBtn from "../components/PokemonBtn";
 import BlogCard from "../components/BlogCard";
 import bg_video from '../assets/home_bg_vid.mp4'
 import Navbar from "../components/Navbar";
-
-const blog_url = "https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@decodeaditya";
+import { useBlog } from "../Context/BlogContext";
 
 export default function Homepage() {
-    const [blogs, setBlogs] = useState([])
     const Links = [
         {
             href: '#blogs',
@@ -21,21 +19,7 @@ export default function Homepage() {
         }
     ]
 
-    useEffect(() => {
-        const getMediumPosts = async () => {
-            try {
-                const res = await fetch(blog_url)
-                const data = await res.json()
-                if (!data) {
-                    console.log('Error fetching Blogs!')
-                }
-                setBlogs(data.items.slice(0, 3))
-            } catch (error) {
-                console.error("Error fetching Medium posts:", error)
-            }
-        }
-        getMediumPosts()
-    }, [])
+    const { blogs } = useBlog()
 
     return (
         <>
@@ -97,7 +81,7 @@ export default function Homepage() {
                                 </h2>
                             </div>
                             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                                {blogs.map((blog, index) => (
+                                {blogs.slice(0, 3).map((blog, index) => (
                                     <a
                                         key={blog.link}
                                         href={blog.link}

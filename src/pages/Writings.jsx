@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import BlogCard from "../components/BlogCard";
 import Navbar from "../components/Navbar";
+import { useBlog } from "../Context/BlogContext";
 
 const blog_url = "https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@decodeaditya";
 
 export default function Blogs() {
-  const [blogs, setBlogs] = useState([])
   const [filtered, setFiltered] = useState([])
   const [search, setSearch] = useState("")
 
@@ -17,23 +17,7 @@ export default function Blogs() {
     }
   ]
 
-  useEffect(() => {
-    const getMediumPosts = async () => {
-      try {
-        const res = await fetch(blog_url)
-        const data = await res.json()
-        if (!data) {
-          console.log('Error fetching Blogs!')
-          return
-        }
-        setBlogs(data.items || [])
-        setFiltered(data.items || [])
-      } catch (error) {
-        console.error("Error fetching Medium posts:", error)
-      }
-    }
-    getMediumPosts()
-  }, [])
+  const { blogs } = useBlog()
 
   useEffect(() => {
     if (!search.trim()) {
