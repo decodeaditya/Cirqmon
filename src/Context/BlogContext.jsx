@@ -9,12 +9,12 @@ export function BlogProvider({ children }) {
     useEffect(() => {
         const getMediumPosts = async () => {
             try {
-                const res = await fetch('https://www.cirqmon.dev/api/blogs');
+                const res = await fetch('/api/blogs');
                 const data = await res.json()
                 if (!data) {
                     console.log('Error fetching Blogs!')
                 }
-                setBlogs(data.items)
+                setBlogs(data)
             } catch (error) {
                 console.error("Error fetching Medium posts:", error)
             }
