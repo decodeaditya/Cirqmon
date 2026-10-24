@@ -9,7 +9,7 @@ export function BlogProvider({ children }) {
     useEffect(() => {
         const getMediumPosts = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/blogs');
+                const res = await fetch('/api/blogs');
                 const data = await res.json()
                 if (!data) {
                     console.log('Error fetching Blogs!')
