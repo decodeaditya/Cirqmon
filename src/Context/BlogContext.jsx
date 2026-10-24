@@ -5,12 +5,11 @@ export const useBlog = () => useContext(BlogContext);
 
 export function BlogProvider({ children }) {
     const [blogs, setBlogs] = useState([]);
-    const blog_url = `https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/@decodeaditya/feed&api_key=${import.meta.env.VITE_RSS_FEED}`; 
 
     useEffect(() => {
         const getMediumPosts = async () => {
             try {
-                const res = await fetch(blog_url);
+                const res = await fetch('/api/blogs');
                 const data = await res.json()
                 if (!data) {
                     console.log('Error fetching Blogs!')
