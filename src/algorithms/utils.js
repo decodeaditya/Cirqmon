@@ -77,13 +77,6 @@ const canvasToJSON = (circuit) => {
   return { circuitInstructions, maxQubits };
 };
 
-const getBlogImg = (content) => {
-  const imgRegex = /<img[^>]+src=["']([^"']+)["']/;
-  const match = content.match(imgRegex);
-
-  return match[1];
-}
-
-export { exportToCode, canvasToJSON, getBlogImg }
+export { exportToCode, canvasToJSON }
 
 

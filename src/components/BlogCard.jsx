@@ -1,6 +1,20 @@
-import { getBlogImg } from "../algorithms/utils"
-
 const BlogCard = ({ blog, index }) => {
+
+    const pubDate = blog.pubDate
+        ? new Date(blog.pubDate).toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        })
+        : ""
+
+    const getBlogImg = (content) => {
+        const imgRegex = /<img[^>]+src=["']([^"']+)["']/;
+        const match = content.match(imgRegex);
+
+        return match[1];
+    }
+
     return (
         <>
             <div>
@@ -9,10 +23,10 @@ const BlogCard = ({ blog, index }) => {
                         Blog {index + 1}
                     </span>
                     <span className="text-xs text-white/80">
-                        {blog.pubDate?.split(" ")[0].replaceAll("-", "/")}
+                        {pubDate}
                     </span>
                 </div>
-                <img src={getBlogImg(blog.description)} className="w-full h-60 my-4 rounded-2xl shadow-xl" style={{ objectFit: 'cover' }} />
+                <img src={getBlogImg(blog.content || blog["content:encoded"] || "")} className="w-full h-60 my-4 rounded-2xl shadow-xl" style={{ objectFit: 'cover' }} loading="lazy" />
                 <h3 className="text-2xl font-black tracking-tighter py-4 rounded-2xl mb-3 leading-tight">
                     {blog.title}
                 </h3>
